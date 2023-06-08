@@ -23,9 +23,12 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
     Route::apiResource('/users', UserController::class);
+    
 });
 
 Route::post('/signup', [AuthController::class, 'signup']);
 Route::post('/login', [AuthController::class, 'login']);
 
+// add here
 Route::get('/attendance/{employeeId}' ,  [AttendanceController::class, 'getAttendanceInfo']);
+Route::post('/attendance/upload',  [AttendanceController::class, 'uploadAttendance'])->name('attendance.upload');

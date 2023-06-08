@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\attendances;
-use app\Services\AttendanceService;
+use App\Services\AttendanceService;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
@@ -33,7 +33,6 @@ class AttendanceController extends Controller
     public function getAttendanceInfo($employeeId)
     {
         // Call the corresponding method from the AttendanceService
-        \Log::info('enter here');
 
         $attendance = $this->attendanceService->getAttendanceInfo($employeeId);
 

@@ -1,26 +1,36 @@
 <?php
 
-namespace app\Services;
+namespace App\Services;
 
-use App\Models\attendances;
+use App\Imports\AttendanceImport;
+use App\Models\Attendance;
+use Excel;
 
 class AttendanceService
 {
     public function uploadAttendance($file)
     {
-        // Process the file and extract the data
+        \Log::info($file);
+        $data = Excel::import(new AttendanceImport, $file);
 
-        // Store the attendance data in the database using the Attendance model
+        \log::info($data);
+        // Store the data in the database
+        foreach ($data as $row) {
+            Attendance::create([
+                'user_id' => $row['employee_id'],
+                'checkin' => $row['checkin'],
+                'checkout' => $row['checkout'],
+            ]);
+        }
+
+        return response()->json(['message' => 'Attendance data uploaded successfully']);
     }
 
     public function getAttendanceInfo($employeeId)
     {
 
         // Retrieve the attendance data for the specified employee
-
-        \Log::info('one step');
-        $attendance = attendances::where('employee_id', $employeeId)->get();
-
+        $attendance = Attendance::where('user_id', $employeeId)->get();
         // Calculate the total working hours
 
         return $attendance;
