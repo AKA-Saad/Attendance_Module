@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axiosClient from "../axios-client.js";
 import { useStateContext } from "../context/ContextProvider";
 
 import axios from 'axios';
@@ -6,17 +7,19 @@ import axios from 'axios';
 const AttendanceList = () => {
   const [attendance, setAttendance] = useState([]);
 
-  const { user } = useStateContext();
-  console.log(useState([]));
+  const { user, setUser } = useStateContext();
 
   useEffect(() => {
-    fetchAttendance();
-  }, []);
+    axiosClient.get('/user')
+      .then(({ data }) => {
+        setUser(data);
+        fetchAttendance(data.id);
+      })
+  }, [])
 
-
-  const fetchAttendance = async () => {
+  const fetchAttendance = async (id) => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/attendance/${user.id}`);
+      const response = await axios.get(`http://127.0.0.1:8000/api/attendance/${id}`);
       console.log(response.data);
       setAttendance(response.data);
     } catch (error) {
@@ -24,9 +27,11 @@ const AttendanceList = () => {
     }
   };
 
+
+
   return (
     <div>
-      <h2>Attendance List  </h2>
+      <h2>Attendance List</h2>
       <table>
         <thead>
           <tr>
