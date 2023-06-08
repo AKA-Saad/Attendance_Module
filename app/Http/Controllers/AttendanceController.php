@@ -26,7 +26,6 @@ class AttendanceController extends Controller
         // Call the corresponding method from the AttendanceService
 
         $this->attendanceService->uploadAttendance($request->file('file'));
-
         return response()->json(['message' => 'Attendance uploaded successfully']);
     }
 

@@ -10,18 +10,31 @@ class AttendanceImport implements ToCollection
     /**
      * @param Collection $collection
      */
+    protected $data = [];
+
     public function collection($rows)
     {
-        $data = [];
+        $this->data = [];
+        $headers = $rows->first();
+        $employeeIdIndex = $headers->search('employee_id');
+        $checkinIndex = $headers->search('checkin');
+        $checkoutIndex = $headers->search('checkout');
 
-        foreach ($rows as $row) {
-            $data[] = [
-                'user_id' => $row['employee_id'],
-                'checkin' => $row['checkin'],
-                'checkout' => $row['checkout'],
-            ];
+        foreach ($rows as $key => $row) {
+            if ($key != 0) {
+                $this->data[] = [
+                    'employee_id' => $row[$employeeIdIndex],
+                    'checkin' => $row[$checkinIndex],
+                    'checkout' => $row[$checkoutIndex],
+                ];
+            }
         }
 
-        return $data;
     }
+
+    public function getData()
+    {
+        return $this->data;
+    }
+    
 }

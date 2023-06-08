@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import {useStateContext} from "../context/ContextProvider";
+import { useStateContext } from "../context/ContextProvider";
+
 import axios from 'axios';
 
 const AttendanceList = () => {
   const [attendance, setAttendance] = useState([]);
-  const {user} = useStateContext();
+
+  const { user } = useStateContext();
   console.log(useState([]));
-  
+
   useEffect(() => {
     fetchAttendance();
   }, []);
@@ -15,6 +17,7 @@ const AttendanceList = () => {
   const fetchAttendance = async () => {
     try {
       const response = await axios.get(`http://127.0.0.1:8000/api/attendance/${user.id}`);
+      console.log(response.data);
       setAttendance(response.data);
     } catch (error) {
       console.error(error);
@@ -27,7 +30,7 @@ const AttendanceList = () => {
       <table>
         <thead>
           <tr>
-            <th>Employee ID</th>
+            <th>Name</th>
             <th>Check In</th>
             <th>Check Out</th>
             <th> Total Working Hours</th>
@@ -39,14 +42,28 @@ const AttendanceList = () => {
               <td colSpan="4">No attendance data available</td>
             </tr>
           ) : (
-            attendance.map((record) => (
-              <tr key={record.id}>
-                <td>{record.employee_id}</td>
-                <td>{record.check_in || 'N/A'}</td>
-                <td>{record.check_out || 'N/A'}</td>
-                <td>{'logic' || 'N/A'}</td>
-              </tr>
-            ))
+            attendance.map((record) => {
+              const checkin = record.checkin || 'N/A';
+              const checkout = record.checkout || 'N/A';
+
+              let totalWorkingHours = 'N/A';
+              if (checkin !== 'N/A' && checkout !== 'N/A') {
+                const checkinDate = new Date(checkin);
+                const checkoutDate = new Date(checkout);
+                const timeDiff = Math.abs(checkoutDate - checkinDate);
+                totalWorkingHours = Math.floor(timeDiff / (1000 * 60 * 60));
+              }
+
+              return (
+                <tr key={record.id}>
+                  <td>{user.name}</td>
+                  <td>{checkin}</td>
+                  <td>{checkout}</td>
+                  <td>{totalWorkingHours !== 'N/A' ? `${totalWorkingHours} hours` : 'N/A'}</td>
+                </tr>
+              );
+            })
+
           )}
         </tbody>
       </table>

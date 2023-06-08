@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->bigIncrements('id');
+            // Both fields data and present nullable in future migrations
             $table->date('date');
             $table->boolean('present');
             $table->timestamps();
